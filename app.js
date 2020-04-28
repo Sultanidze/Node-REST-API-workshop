@@ -3,8 +3,17 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 const app = express();
-// eslint-disable-next-line no-unused-vars
-const db = mongoose.connect('mongodb://localhost/bookAPI');
+
+if (process.env.ENV === 'Test') {
+  // eslint-disable-next-line no-console
+  console.log('Test env');
+  // eslint-disable-next-line no-unused-vars
+  const db = mongoose.connect('mongodb://localhost/bookAPI-test');
+} else {
+  // eslint-disable-next-line no-unused-vars
+  const db = mongoose.connect('mongodb://localhost/bookAPI');
+}
+
 const port = process.env.PORT || 3000;
 const Book = require('./models/bookModel');
 const bookRouter = require('./routes/bookRouter')(Book);
@@ -18,7 +27,9 @@ app.get('/', (req, res) => {
   res.send('Welcome to my Node API!');
 });
 
-app.listen(port, () => {
+app.server = app.listen(port, () => {
   // eslint-disable-next-line no-console
   console.log('Running on port ', port);
 });
+
+module.exports = app;
